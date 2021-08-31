@@ -1,0 +1,15 @@
+.calculator {
+  width: 50%;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: end;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+}
