@@ -2,14 +2,16 @@
   width: 50%;
 }
 
-.input {
+.user-input {
   width: 100%;
   box-sizing: border-box;
-  text-align: end;
+  text-align: right;
 }
 
 .button-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  column-gap: 10px;
+  row-gap: 10px;  
   width: 100%;
 }
