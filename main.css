@@ -1,8 +1,10 @@
 .calculator {
   width: 50%;
+  margin: 0 auto;
+  
 }
 
-.user-input {
+.display {
   width: 100%;
   box-sizing: border-box;
   text-align: right;
@@ -14,4 +16,5 @@
   column-gap: 10px;
   row-gap: 10px;  
   width: 100%;
+  margin-top: 10px;
 }
