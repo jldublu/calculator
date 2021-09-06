@@ -2,6 +2,7 @@ let number1;
 let number2;
 let operator;
 let displayElement = document.querySelector('.display');
+const error = 'Error';
 
 window.onclick = function(e) {
   let element = e.target;
@@ -20,7 +21,7 @@ window.onclick = function(e) {
       clearDisplay();
       resetValues();
       updateDisplay(result);
-      number1 = result;
+      number1 = isNaN(result) ? undefined : result;
       result = undefined;
       break;
     case 'clear':
@@ -28,7 +29,14 @@ window.onclick = function(e) {
       resetValues();
       break;
     case 'backspace':
-      break;        
+      removeLastEntry(displayElement.innerHTML);
+      break;
+    case 'decimal':
+      if (!displayElement.innerHTML.includes('.')) {
+        updateDisplay(element.outerText);
+        updateNumber(element.outerText);
+      }
+      break;          
     default: 
       console.log(`No action can be done on ${element}`);
   }
@@ -48,31 +56,53 @@ function multiply(number1, number2) {
 }
 
 function divide(number1, number2) {
+  if (number2 == 0) {
+    return error;
+  }
+
   return number1 / number2;
 }
 
 function operate(operator, number1, number2) {
-  switch (operator) {
-    case '+': 
-      return add(number1, number2);
-      break;
-    case '-':
-      return subtract(number1, number2);
-      break;
-    case '*':
-      return multiply(number1, number2);
-      break;
-    case '/':
-      return divide(number1, number2);
-      break;
-    default:
-      console.log('Operator not recognized...');  
+  if (operator === undefined || number1 === undefined || number2 === undefined) {
+    return error;
+  } else {
+    switch (operator) {
+      case '+': 
+        return add(number1, number2);
+        break;
+      case '-':
+        return subtract(number1, number2);
+        break;
+      case '*':
+        return multiply(number1, number2);
+        break;
+      case '/':
+        return divide(number1, number2);
+        break;
+      default:
+        console.log('Operator not recognized...'); 
+        return error; 
+    }
   }
-
 }
 
 function clearDisplay() {
   displayElement.innerHTML = '';
+}
+
+function removeLastEntry() {
+  let initialDisplay = displayElement.innerHTML;
+  let newDisplay = initialDisplay.substring(0, initialDisplay.length - 1);
+  clearDisplay();
+  updateDisplay(newDisplay);
+  if (operator === undefined) {
+    number1 = newDisplay;
+  } else if (number2 === undefined && operator !== undefined) {
+    operator = undefined;
+  } else {
+    number2 = number2.substring(0, number2.length - 1);
+  }
 }
 
 function resetValues() {
@@ -113,5 +143,10 @@ function updateOperator(value) {
     result = undefined;
     operator = value;
     updateDisplay(value);
+  } else if (value === '-' && number1 === undefined) {
+    number1 = 0;
+    operator = value;
+    clearDisplay();
+    updateDisplay(number1 + value);
   }
 }
