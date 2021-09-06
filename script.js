@@ -8,11 +8,14 @@ window.onclick = function(e) {
   console.log(element.className);
   switch (element.className) {
     case 'number':
+      updateDisplay(element.outerText);
+      updateNumber(element.outerText);
+      break;
     case 'operator':
       updateDisplay(element.outerText);
+      updateOperator(element.outerText);
       break;
     case 'evaluate':
-      parseValuesFromDisplay(displayElement.value);
       let result = operate(operator, number1, number2);
       clearDisplay();
       resetValues();
@@ -69,43 +72,7 @@ function operate(operator, number1, number2) {
 }
 
 function clearDisplay() {
-  displayElement.value = '';
-}
-
-function parseValuesFromDisplay(displayText) {
-  let splitValue;
-  if (displayText.includes('+')) {
-    splitValue = '+';
-  } else if (displayText.includes('-')) {
-    splitValue = '-';
-  } else if (displayText.includes('*')) {
-    splitValue = '*';
-  } else if (displayText.includes('/')) {
-    splitValue = '/';
-  } 
-
-  if (splitValue) {
-    operator = splitValue;
-    let displayArray = displayText.split(splitValue);
-    if (isNaN(displayArray[0])) {
-      clearDisplay();
-      updateDisplay('Error');
-    } else {
-      number1 = displayArray[0];
-    }
-
-    if (isNaN(displayArray[1])) {
-      clearDisplay();
-      updateDisplay('Error');
-    } else {
-      number2 = displayArray[1];
-    }
-
-  } else {
-    clearDisplay();
-    updateDisplay('Error');
-  }
-  
+  displayElement.innerHTML = '';
 }
 
 function resetValues() {
@@ -115,5 +82,36 @@ function resetValues() {
 }
 
 function updateDisplay(value) {
-  displayElement.value = displayElement.value + value;
+  displayElement.innerHTML += value;
+}
+
+function updateNumber(value) {
+  if (number1 === undefined) {
+    number1 = value;
+  } else {
+    if (operator === undefined) {
+      number1 += value;
+    } else {
+      if (number2 === undefined) {
+        number2 = value;
+      } else {
+        number2 += value;
+      }
+    }
+  }
+}
+
+function updateOperator(value) {
+  if (number1 !== undefined && operator === undefined) {
+    operator = value;
+  } else if (number1 !== undefined && number2 !== undefined && operator !== undefined) {
+    let result = operate(operator, number1, number2);
+    clearDisplay();
+    resetValues();
+    updateDisplay(result);
+    number1 = result;
+    result = undefined;
+    operator = value;
+    updateDisplay(value);
+  }
 }
