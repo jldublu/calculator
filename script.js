@@ -6,7 +6,6 @@ const error = 'Error';
 
 window.onclick = function(e) {
   let element = e.target;
-  console.log(element.className);
   switch (element.className) {
     case 'number':
       updateDisplay(element.outerText);
@@ -32,10 +31,7 @@ window.onclick = function(e) {
       removeLastEntry(displayElement.innerHTML);
       break;
     case 'decimal':
-      if (!displayElement.innerHTML.includes('.')) {
-        updateDisplay(element.outerText);
-        updateNumber(element.outerText);
-      }
+      updateDecimal();
       break;          
     default: 
       console.log(`No action can be done on ${element}`);
@@ -43,16 +39,43 @@ window.onclick = function(e) {
 
 };
 
+document.addEventListener('keydown', (e) => {
+  let keyValue = e.key;
+  if (keyValue.match(/[0-9]/)) {
+    updateDisplay(keyValue);
+    updateNumber(keyValue);
+  } else if (keyValue.match(/(\+|-|\*|\/)/)) {
+    updateDisplay(keyValue);
+    updateOperator(keyValue);
+  } else if (keyValue === 'Enter') {
+    let result = operate(operator, number1, number2);
+    clearDisplay();
+    resetValues();
+    updateDisplay(result);
+    number1 = isNaN(result) ? undefined : result;
+    result = undefined;
+  } else if (keyValue === 'Delete') {
+    clearDisplay();
+    resetValues();
+  } else if (keyValue === 'Backspace') {
+    removeLastEntry(displayElement.innerHTML);
+  } else if (keyValue === '.') {
+    updateDecimal();
+  } else {
+    console.log(`No action can be done on ${keyValue}`);
+  }
+});
+
 function add(number1, number2) {
-  return Number(number1) + Number(number2);
+  return Number((Number(number1) + Number(number2)).toFixed(4)).toString();
 }
 
 function subtract(number1, number2) {
-  return number1 - number2;
+  return Number((number1 - number2).toFixed(4)).toString();
 }
 
 function multiply(number1, number2) {
-  return number1 * number2;
+  return Number((number1 * number2).toFixed(4)).toString();
 }
 
 function divide(number1, number2) {
@@ -60,7 +83,7 @@ function divide(number1, number2) {
     return error;
   }
 
-  return number1 / number2;
+  return Number((number1 / number2).toFixed(4)).toString();
 }
 
 function operate(operator, number1, number2) {
@@ -109,6 +132,25 @@ function resetValues() {
   number1 = undefined;
   number2 = undefined;
   operator = undefined;
+}
+
+function updateDecimal() {
+  let decimal = '.';
+  if (number1 === undefined) {
+    number1 = decimal;
+    updateDisplay(decimal);
+  } else {
+    if (operator === undefined && !number1.includes(decimal)) {
+      number1 += decimal;
+      updateDisplay(decimal)
+    } else if (operator !== undefined && number2 === undefined) {
+      number2 = decimal;
+      updateDisplay(decimal);
+    } else if (operator !== undefined && !number2.includes(decimal)) {
+      number2 += decimal;
+      updateDisplay(decimal);
+    }
+  } 
 }
 
 function updateDisplay(value) {
