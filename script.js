@@ -41,7 +41,7 @@ window.onclick = function(e) {
 
 document.addEventListener('keydown', (e) => {
   let keyValue = e.key;
-  if (keyValue.match(/[0-9]/)) {
+  if (keyValue.match(/^[0-9]/)) {
     updateDisplay(keyValue);
     updateNumber(keyValue);
   } else if (keyValue.match(/(\+|-|\*|\/)/)) {
